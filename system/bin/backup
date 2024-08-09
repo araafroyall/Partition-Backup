@@ -1,0 +1,85 @@
+#!/system/bin/sh
+# Modified by AraafRoyall
+
+# Where to backup by default
+BACKUP_PATH="/sdcard/backup"
+
+# Log in red and exit
+err() {
+        echo -e "\e[91m[!] $@\e[39m"
+        exit 1
+}
+
+# Log in white and continue (unnecessary)
+dbg() {
+        echo -e "[*] $@"
+}
+
+usage() {
+        echo -n "Usage: `basename $0` [OPTIONS] [PARTITIONS]
+Options:
+  -h                        Show usage
+  -d                        Backup path (default: $BACKUP_PATH)
+
+Partition Examples:
+  all
+  boot
+  persist
+  system
+  userdata
+  vendor
+"
+}
+
+# Check for root permissions
+[[ `id -u` -ne 0 ]] && err "No root permissions. Exiting."
+
+while getopts ":h:d" opt; do
+        case $opt in
+                h)
+                        usage
+                        exit 0
+                        ;;
+                d)
+                        BACKUP_PATH="$OPTARG"
+                        ;;
+                *)
+                        usage
+                        exit 1
+                        ;;
+        esac
+done
+shift $((OPTIND-1))
+
+# Get active slot
+SLOT=`getprop ro.boot.slot_suffix`
+
+PARTS="$@"
+
+[[ -z "$@" ]] && err "No partitions specified. Exiting."
+
+# Backup all partitions
+[[ "$PARTS" == "all" ]] && PARTS=`ls /dev/block/bootdevice/by-name/`
+
+mkdir -p "$BACKUP_PATH"
+
+# Backup specified partitions
+for part in $PARTS
+do
+        dbg "Backing up $part..."
+
+        # Get path
+        PARTPATH="/dev/block/bootdevice/by-name/$part"
+        [[ ! -L "$PARTPATH" ]] && PARTPATH="$PARTPATH$SLOT"
+
+        # Check if exists
+        if [[ ! -L "$PARTPATH" ]]
+        then
+                dbg "Could not find $part. Skipping."
+                continue
+        fi
+
+        dd if="$PARTPATH" of="$BACKUP_PATH/$part.img"
+done
+
+dbg "Done with: $@."
