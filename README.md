@@ -18,3 +18,9 @@ Partition Examples:
   userdata[_a,_b]
   vendor[_a,_b]
 ```
+
+### Developer Info
+I have NOT Created this module , I just Modified it to make installable zip
+
+Gmail : araafroyall@gmail.com
+Telegram : @AraafRoyall
