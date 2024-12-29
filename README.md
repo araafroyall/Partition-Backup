@@ -21,6 +21,7 @@ Partition Examples:
 
 ### Developer Info
 I have NOT Created this module , I just Modified it to make installable zip
+Original Credit is for respected creators
 
 Gmail : araafroyall@gmail.com
 Telegram : @AraafRoyall
