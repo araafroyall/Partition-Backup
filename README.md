@@ -26,6 +26,5 @@ Original Credit is for respected creators
 
 ### My Contact Details
 
-Gmail : araafroyall@gmail.com
 
 Telegram : @AraafRoyall
